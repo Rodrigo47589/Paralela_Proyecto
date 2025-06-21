@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+   <div class="container">
+       <h1>Proyecto de Ordenamiento</h1>
+       <img src="{{ url_for('static', filename='cayetano_escudo.jpg') }}" alt="Escudo UPCH" style="width: 50%; border-radius: 10px; margin-bottom: 20px;">
+       <p style="text-align: justify; margin-bottom: 30px;">
+        Esta pagina permite comparar el rendimiento de dos algoritmos de ordenamiento (MergeSort y RadixSort)
+        usando dos enfoques de computación paralela: <strong>OpenMP</strong> para el CPU y <strong>CUDA</strong> para el GPU.
+       </p>
+       <p style="text-align: justify; margin-bottom: 30px;">
+           Eliga su algoritmo:
+       </p>
+       <div class="botones-verticales">
+           <a href="/mergesort"><button>MergeSort</button></a>
+           <a href="/radixsort"><button>Radixsort</button></a>
+       </div>
+   </div>
+</body>
+</html>

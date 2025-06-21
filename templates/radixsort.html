@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>RadixSort - Cargar CSV</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>RadixSort - Cargar CSV</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        <input type="file" name="archivo" accept=".csv" required><br><br>
+        <div class="botones">
+            <button type="submit" name="accion" value="omp">Ordenar con OpenMP</button>
+            <button type="submit" name="accion" value="cuda">Ordenar con CUDA</button>
+        </div>
+    </form>
+
+    <div class="tablas-container">
+        {% if tabla_omp %}
+        <div class="tabla-bloque">
+            <h2>Vista previa (OpenMP)</h2>
+            <p><strong>Cantidad de datos usados:</strong> {{ cantidad_omp }}</p>
+            {{ tabla_omp|safe }}
+            <a href="#"><button>Descargar archivo OpenMP</button></a>
+        </div>
+        {% endif %}
+
+        {% if tabla_cuda %}
+        <div class="tabla-bloque">
+            <h2>Vista previa (CUDA)</h2>
+            <p><strong>Cantidad de datos usados:</strong> {{ cantidad_cuda }}</p>
+            {{ tabla_cuda|safe }}
+            <a href="#"><button>Descargar archivo CUDA</button></a>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="volver">
+        <a href="/"><button class="btn-volver">Volver al inicio</button></a>
+    </div>
+</div>
+</body>
+</html>
