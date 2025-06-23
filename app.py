@@ -46,9 +46,24 @@ def mergesort():
                     session['cantidad_omp'] = len(df)
 
             elif accion == 'cuda':
-                df = pd.read_csv(ARCHIVO_ENTRADA)
-                session['tabla_cuda'] = df.head(4).to_html(classes='tabla', index=False)
-                session['cantidad_cuda'] = len(df)
+                try:
+                    result = subprocess.run(
+                        ["MergeSortCuda5.exe", ARCHIVO_ENTRADA, ARCHIVO_SALIDA],
+                        check=True,
+                        cwd=os.getcwd(),
+                        capture_output=True,
+                        text=True
+                    )
+                    for linea in result.stdout.splitlines():
+                        if "ms" in linea:
+                            session['tiempo_cuda'] = linea.strip()
+                except subprocess.CalledProcessError as e:
+                    return f"<h2>Error al ejecutar MergeSort_OpenMP.exe:</h2><pre>{e}</pre>"
+
+                if os.path.exists(ARCHIVO_SALIDA):
+                    df = pd.read_csv(ARCHIVO_SALIDA)
+                    session['tabla_cuda'] = df.head(4).to_html(classes='tabla', index=False)
+                    session['cantidad_cuda'] = len(df)
 
     return render_template(
         'mergesort.html',
@@ -56,7 +71,8 @@ def mergesort():
         cantidad_omp=session.get('cantidad_omp'),
         tiempo_omp=session.get('tiempo_omp'),
         tabla_cuda=session.get('tabla_cuda'),
-        cantidad_cuda=session.get('cantidad_cuda')
+        cantidad_cuda=session.get('cantidad_cuda'),
+        tiempo_cuda=session.get('tiempo_cuda')
     )
 
 
@@ -91,9 +107,24 @@ def radixsort():
                     session['cantidad_omp'] = len(df)
 
             elif accion == 'cuda':
-                df = pd.read_csv(ARCHIVO_ENTRADA)
-                session['tabla_cuda'] = df.head(4).to_html(classes='tabla', index=False)
-                session['cantidad_cuda'] = len(df)
+                try:
+                    result = subprocess.run(
+                        ["MergeSortCuda5.exe", ARCHIVO_ENTRADA, ARCHIVO_SALIDA],
+                        check=True,
+                        cwd=os.getcwd(),
+                        capture_output=True,
+                        text=True
+                    )
+                    for linea in result.stdout.splitlines():
+                        if "ms" in linea:
+                            session['tiempo_cuda'] = linea.strip()
+                except subprocess.CalledProcessError as e:
+                    return f"<h2>Error al ejecutar MergeSort_OpenMP.exe:</h2><pre>{e}</pre>"
+
+                if os.path.exists(ARCHIVO_SALIDA):
+                    df = pd.read_csv(ARCHIVO_SALIDA)
+                    session['tabla_cuda'] = df.head(4).to_html(classes='tabla', index=False)
+                    session['cantidad_cuda'] = len(df)
 
     return render_template(
         'radixsort.html',
@@ -101,7 +132,8 @@ def radixsort():
         cantidad_omp=session.get('cantidad_omp'),
         tiempo_omp=session.get('tiempo_omp'),
         tabla_cuda=session.get('tabla_cuda'),
-        cantidad_cuda=session.get('cantidad_cuda')
+        cantidad_cuda=session.get('cantidad_cuda'),
+        tiempo_cuda=session.get('tiempo_cuda')
     )
 
 
@@ -109,10 +141,13 @@ def radixsort():
 def descargar_openmp():
     return send_file(ARCHIVO_SALIDA, as_attachment=True)
 
+@app.route('/descargar_cuda')
+def descargar_cuda():
+    return send_file(ARCHIVO_SALIDA, as_attachment=True)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
-
 
 
 
