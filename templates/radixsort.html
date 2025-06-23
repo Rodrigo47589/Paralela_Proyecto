@@ -33,9 +33,12 @@
         {% if tabla_cuda %}
         <div class="tabla-bloque">
             <h2>Vista previa (CUDA)</h2>
+            {% if tiempo_omp %}
+            <p><strong>Tiempo de ejecución:</strong> {{ tiempo_cuda }}</p>
+            {% endif %}
             <p><strong>Cantidad de datos usados:</strong> {{ cantidad_cuda }}</p>
             {{ tabla_cuda|safe }}
-            <a href="#"><button>Descargar archivo CUDA</button></a>
+            <a href="/descargar_cuda"><button>Descargar archivo CUDA</button></a>
         </div>
         {% endif %}
     </div>
