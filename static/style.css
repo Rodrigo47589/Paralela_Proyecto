@@ -11,8 +11,6 @@ body {
 }
 
 
-
-
 .container {
     position: relative;
     z-index: 1;
@@ -41,13 +39,6 @@ input[type="file"] {
     margin-bottom: 20px;
 }
 
-.botones-vertical {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    align-items: center;
-    margin-top: 20px;
-}
 
 button {
     padding: 10px 20px;

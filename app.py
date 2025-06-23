@@ -4,23 +4,19 @@ import os
 import subprocess
 
 app = Flask(__name__)
-app.secret_key = 'clave_secreta'  # Necesario para usar sesiones
+app.secret_key = 'clave_secreta'  # Necesario para session
 
 ARCHIVO_ENTRADA = "usuarios.csv"
 ARCHIVO_SALIDA = "usuarios_ordenados.csv"
 
 @app.route('/')
 def inicio():
+    session.clear()  # Reinicia sesión al volver al inicio
     return render_template('inicio.html')
+
 
 @app.route('/mergesort', methods=['GET', 'POST'])
 def mergesort():
-    tabla_omp = None
-    tabla_cuda = None
-    cantidad_omp = None
-    cantidad_cuda = None
-    tiempo_omp = None
-
     if request.method == 'POST':
         archivo = request.files['archivo']
         if archivo:
@@ -38,43 +34,34 @@ def mergesort():
                         capture_output=True,
                         text=True
                     )
-                    salida = result.stdout
-                    for linea in salida.split('\n'):
-                        if 'milisegundos' in linea:
-                            tiempo_omp = linea.strip()
-                            break
+                    for linea in result.stdout.splitlines():
+                        if "milisegundos" in linea:
+                            session['tiempo_omp'] = linea.strip()
                 except subprocess.CalledProcessError as e:
-                    return f"<h2>Error al ejecutar MergeSort_OpenMP.exe:</h2><pre>{e}</pre><pre>{e.stdout}\n{e.stderr}</pre>"
+                    return f"<h2>Error al ejecutar MergeSort_OpenMP.exe:</h2><pre>{e}</pre>"
 
                 if os.path.exists(ARCHIVO_SALIDA):
-                    df_ordenado = pd.read_csv(ARCHIVO_SALIDA)
-                    tabla_omp = df_ordenado.head(4).to_html(classes='tabla', index=False)
-                    cantidad_omp = len(df_ordenado)
-                else:
-                    return "<h3>Error: No se generó el archivo usuarios_ordenados.csv</h3>"
+                    df = pd.read_csv(ARCHIVO_SALIDA)
+                    session['tabla_omp'] = df.head(4).to_html(classes='tabla', index=False)
+                    session['cantidad_omp'] = len(df)
 
             elif accion == 'cuda':
                 df = pd.read_csv(ARCHIVO_ENTRADA)
-                tabla_cuda = df.head(4).to_html(classes='tabla', index=False)
-                cantidad_cuda = len(df)
+                session['tabla_cuda'] = df.head(4).to_html(classes='tabla', index=False)
+                session['cantidad_cuda'] = len(df)
 
     return render_template(
         'mergesort.html',
-        tabla_omp=tabla_omp,
-        cantidad_omp=cantidad_omp,
-        tiempo_omp=tiempo_omp,
-        tabla_cuda=tabla_cuda,
-        cantidad_cuda=cantidad_cuda
+        tabla_omp=session.get('tabla_omp'),
+        cantidad_omp=session.get('cantidad_omp'),
+        tiempo_omp=session.get('tiempo_omp'),
+        tabla_cuda=session.get('tabla_cuda'),
+        cantidad_cuda=session.get('cantidad_cuda')
     )
+
 
 @app.route('/radixsort', methods=['GET', 'POST'])
 def radixsort():
-    tabla_omp = None
-    tabla_cuda = None
-    cantidad_omp = None
-    cantidad_cuda = None
-    tiempo_omp = None
-
     if request.method == 'POST':
         archivo = request.files['archivo']
         if archivo:
@@ -92,41 +79,40 @@ def radixsort():
                         capture_output=True,
                         text=True
                     )
-                    salida = result.stdout
-                    for linea in salida.split('\n'):
-                        if 'milisegundos' in linea:
-                            tiempo_omp = linea.strip()
-                            break
+                    for linea in result.stdout.splitlines():
+                        if "milisegundos" in linea:
+                            session['tiempo_omp'] = linea.strip()
                 except subprocess.CalledProcessError as e:
-                    return f"<h2>Error al ejecutar RadixSort_OpenMP.exe:</h2><pre>{e}</pre><pre>{e.stdout}\n{e.stderr}</pre>"
+                    return f"<h2>Error al ejecutar RadixSort_OpenMP.exe:</h2><pre>{e}</pre>"
 
                 if os.path.exists(ARCHIVO_SALIDA):
-                    df_ordenado = pd.read_csv(ARCHIVO_SALIDA)
-                    tabla_omp = df_ordenado.head(4).to_html(classes='tabla', index=False)
-                    cantidad_omp = len(df_ordenado)
-                else:
-                    return "<h3>Error: No se generó el archivo usuarios_ordenados.csv</h3>"
+                    df = pd.read_csv(ARCHIVO_SALIDA)
+                    session['tabla_omp'] = df.head(4).to_html(classes='tabla', index=False)
+                    session['cantidad_omp'] = len(df)
 
             elif accion == 'cuda':
                 df = pd.read_csv(ARCHIVO_ENTRADA)
-                tabla_cuda = df.head(4).to_html(classes='tabla', index=False)
-                cantidad_cuda = len(df)
+                session['tabla_cuda'] = df.head(4).to_html(classes='tabla', index=False)
+                session['cantidad_cuda'] = len(df)
 
     return render_template(
         'radixsort.html',
-        tabla_omp=tabla_omp,
-        cantidad_omp=cantidad_omp,
-        tiempo_omp=tiempo_omp,
-        tabla_cuda=tabla_cuda,
-        cantidad_cuda=cantidad_cuda
+        tabla_omp=session.get('tabla_omp'),
+        cantidad_omp=session.get('cantidad_omp'),
+        tiempo_omp=session.get('tiempo_omp'),
+        tabla_cuda=session.get('tabla_cuda'),
+        cantidad_cuda=session.get('cantidad_cuda')
     )
+
 
 @app.route('/descargar_openmp')
 def descargar_openmp():
     return send_file(ARCHIVO_SALIDA, as_attachment=True)
 
+
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
