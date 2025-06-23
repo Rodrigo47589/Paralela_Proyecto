@@ -1,18 +1,13 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, session
 import pandas as pd
 import os
 import subprocess
 
 app = Flask(__name__)
+app.secret_key = 'clave_secreta'  # Necesario para usar sesiones
+
 ARCHIVO_ENTRADA = "usuarios.csv"
 ARCHIVO_SALIDA = "usuarios_ordenados.csv"
-
-# Variables temporales
-tabla_omp = None
-tabla_cuda = None
-cantidad_omp = None
-cantidad_cuda = None
-tiempo_omp = None
 
 @app.route('/')
 def inicio():
@@ -20,8 +15,11 @@ def inicio():
 
 @app.route('/mergesort', methods=['GET', 'POST'])
 def mergesort():
-    global tabla_omp, tabla_cuda, cantidad_omp, cantidad_cuda, tiempo_omp
-
+    tabla_omp = None
+    tabla_cuda = None
+    cantidad_omp = None
+    cantidad_cuda = None
+    tiempo_omp = None
 
     if request.method == 'POST':
         archivo = request.files['archivo']
@@ -33,7 +31,6 @@ def mergesort():
 
             if accion == 'omp':
                 try:
-                    # Ejecuta el programa con los 2 parámetros: entrada y salida
                     result = subprocess.run(
                         ["MergeSort_OpenMP.exe", ARCHIVO_ENTRADA, ARCHIVO_SALIDA],
                         check=True,
@@ -41,8 +38,11 @@ def mergesort():
                         capture_output=True,
                         text=True
                     )
-                    lineas = result.stdout.splitlines()
-                    tiempo_omp = next((l.strip() for l in lineas if "milisegundos" in l), None)
+                    salida = result.stdout
+                    for linea in salida.split('\n'):
+                        if 'milisegundos' in linea:
+                            tiempo_omp = linea.strip()
+                            break
                 except subprocess.CalledProcessError as e:
                     return f"<h2>Error al ejecutar MergeSort_OpenMP.exe:</h2><pre>{e}</pre><pre>{e.stdout}\n{e.stderr}</pre>"
 
@@ -69,7 +69,11 @@ def mergesort():
 
 @app.route('/radixsort', methods=['GET', 'POST'])
 def radixsort():
-    global tabla_omp, tabla_cuda, cantidad_omp, cantidad_cuda, tiempo_omp
+    tabla_omp = None
+    tabla_cuda = None
+    cantidad_omp = None
+    cantidad_cuda = None
+    tiempo_omp = None
 
     if request.method == 'POST':
         archivo = request.files['archivo']
@@ -88,10 +92,11 @@ def radixsort():
                         capture_output=True,
                         text=True
                     )
-                    # Extraer tiempo
-                    lineas = result.stdout.splitlines()
-                    tiempo_omp = next((l.strip() for l in lineas if "milisegundos" in l), None)
-
+                    salida = result.stdout
+                    for linea in salida.split('\n'):
+                        if 'milisegundos' in linea:
+                            tiempo_omp = linea.strip()
+                            break
                 except subprocess.CalledProcessError as e:
                     return f"<h2>Error al ejecutar RadixSort_OpenMP.exe:</h2><pre>{e}</pre><pre>{e.stdout}\n{e.stderr}</pre>"
 
@@ -115,12 +120,14 @@ def radixsort():
         tabla_cuda=tabla_cuda,
         cantidad_cuda=cantidad_cuda
     )
+
 @app.route('/descargar_openmp')
 def descargar_openmp():
     return send_file(ARCHIVO_SALIDA, as_attachment=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
