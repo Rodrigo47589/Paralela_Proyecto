@@ -22,9 +22,12 @@
             {% if tabla_omp %}
                 <div class="tabla-bloque">
                     <h2>Vista previa (OpenMP):</h2>
+                    {% if tiempo_omp %}
+                        <p><strong>Tiempo de ejecución:</strong> {{ tiempo_omp }}</p>
+                    {% endif %}
                     <p><strong>Cantidad de datos usados:</strong> {{ cantidad_omp }}</p>
                     {{ tabla_omp|safe }}
-                    <a href="#"><button>Descargar archivo OpenMP</button></a>
+                    <a href="/descargar_openmp"><button>Descargar archivo OpenMP</button></a>
                 </div>
             {% endif %}
             {% if tabla_cuda %}
