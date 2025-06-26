@@ -4,17 +4,17 @@
 #include <sstream>
 #include <cuda_runtime.h>
 
-// Ajusta cu·ntos hilos tendr· cada bloque CUDA
+// Ajusta cu√°ntos hilos tendr√° cada bloque CUDA
 #define BLOCK_SIZE 1024
 
-// FunciÛn para obtener la cantidad de n˙cleos CUDA de la GPU activa
+// Funci√≥n para obtener la cantidad de n√∫cleos CUDA de la GPU activa
 int getCudaCores() {
     int device;
     cudaGetDevice(&device);
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, device);
 
-    // Cada arquitectura NVIDIA tiene diferente n˙mero de n˙cleos por multiprocesador
+    // Cada arquitectura NVIDIA tiene diferente n√∫mero de n√∫cleos por multiprocesador
     int cores_per_sm = 0;
     switch (prop.major) {
     case 7: // Turing (GTX 1650)
@@ -32,13 +32,13 @@ void merge_kernel(const float* A, const int* idx_A, float* B, int* idx_B,
     int tid = blockIdx.x * blockDim.x + threadIdx.x;
     int segSize = 2 * width;
     int segStart = tid * segSize;
-    if (segStart >= N) return; // Si se pasa del tamaÒo, no hace nada
+    if (segStart >= N) return; // Si se pasa del tama√±o, no hace nada
 
-    // Definir los lÌmites de los dos subarreglos a fusionar
+    // Definir los l√≠mites de los dos subarreglos a fusionar
     int mid = min(segStart + width, N);
     int end = min(segStart + segSize, N);
 
-    // FusiÛn ordenada (descendente)
+    // Fusi√≥n ordenada (descendente)
     int i = segStart, j = mid, k = segStart;
     while (i < mid && j < end) {
         if (A[i] >= A[j]) {
@@ -66,7 +66,7 @@ void merge_kernel(const float* A, const int* idx_A, float* B, int* idx_B,
     }
 }
 
-// FunciÛn que controla el merge sort en GPU y muestra info de cada pasada
+// Funci√≥n que controla el merge sort en GPU y muestra info de cada pasada
 void merge_sort_gpu(float* d_in, int* d_idx, float* d_out, int* d_out_idx, int N, int cuda_cores) {
     int* d_temp_idx;
     float* d_temp;
@@ -76,13 +76,13 @@ void merge_sort_gpu(float* d_in, int* d_idx, float* d_out, int* d_out_idx, int N
     cudaMemcpy(d_temp_idx, d_idx, N * sizeof(int), cudaMemcpyDeviceToDevice);
 
     bool flip = false;
-    // La variable width define el tamaÒo de run a fusionar (1, 2, 4, 8, ...)
+    // La variable width define el tama√±o de run a fusionar (1, 2, 4, 8, ...)
     for (int width = 1; width < N; width *= 2) {
-        int numSegs = (N + 2 * width - 1) / (2 * width); // Cu·ntos segmentos en esta pasada
+        int numSegs = (N + 2 * width - 1) / (2 * width); // Cu√°ntos segmentos en esta pasada
         int numBlocks = (numSegs + BLOCK_SIZE - 1) / BLOCK_SIZE;
         int totalHilos = numBlocks * BLOCK_SIZE;
 
-        // Imprimir cÛmo se distribuye el trabajo en GPU en cada pasada
+        // Imprimir c√≥mo se distribuye el trabajo en GPU en cada pasada
         std::cout << "[PASADA width=" << width
             << "] segmentos=" << numSegs
             << ", bloques=" << numBlocks
@@ -102,7 +102,7 @@ void merge_sort_gpu(float* d_in, int* d_idx, float* d_out, int* d_out_idx, int N
         cudaDeviceSynchronize();
         flip = !flip;
     }
-    // Copiar al buffer final si quedÛ en el temporal
+    // Copiar al buffer final si qued√≥ en el temporal
     if (!flip) {
         cudaMemcpy(d_out, d_temp, N * sizeof(float), cudaMemcpyDeviceToDevice);
         cudaMemcpy(d_out_idx, d_temp_idx, N * sizeof(int), cudaMemcpyDeviceToDevice);
@@ -128,7 +128,7 @@ void leerCSV(const std::string& filename, std::vector<std::string>& nombres, std
             nombres.push_back(nombre);
         }
         catch (...) {
-            std::cerr << "LÌnea con formato incorrecto: " << line << std::endl;
+            std::cerr << "L√≠nea con formato incorrecto: " << line << std::endl;
         }
     }
 }
@@ -160,10 +160,10 @@ int main(int argc, char* argv[]) {
     cudaMemcpy(d_in, scores.data(), N * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_idx, idx.data(), N * sizeof(int), cudaMemcpyHostToDevice);
 
-    // Obtiene y muestra el n˙mero de CUDA cores fÌsicos de la GPU
+    // Obtiene y muestra el n√∫mero de CUDA cores f√≠sicos de la GPU
     int cuda_cores = getCudaCores();
 
-    // Toma el tiempo de ejecuciÛn en GPU
+    // Toma el tiempo de ejecuci√≥n en GPU
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
