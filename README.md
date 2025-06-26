@@ -25,7 +25,7 @@ Para compilar correctamente los algoritmos en C++ con paralelización, se requie
 
 ---
 
-### 🐍 2. Entorno Python con Flask
+### 2. Entorno Python con Flask
 
 1. Instalar Python 3.x
 2. Instalar Flask:
