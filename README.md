@@ -31,7 +31,7 @@ Para compilar correctamente los algoritmos en C++ con paralelización, se requie
    ```bash
    pip install flask
 
-## 🖼️ Diagrama de Estructura del Proyecto
+## Diagrama de Estructura del Proyecto
 
 ![Estructura del Proyecto](https://github.com/VictorNikolai/PC4/raw/main/Imagenes/Imagen.png)
 
