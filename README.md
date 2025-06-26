@@ -15,11 +15,8 @@ Para compilar correctamente los algoritmos en C++ con paralelización, se requie
 - Descargar desde:  
   👉 https://github.com/niXman/mingw-builds-binaries/releases
 
-- Recomendaciones de configuración:
-  - architecture: `x86_64`
-  - threads: `posix`
-  - exception: `seh`
-  - versión GCC: `13.x` o superior
+   Descargar: x86_64-15.1.0-release-posix-seh-ucrt-rt_v12-rev0.7z
+
 
 ## Sin esto, los  archivos `.exe` no podrán usar múltiples hilos correctamente.
 
