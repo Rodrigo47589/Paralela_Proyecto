@@ -31,23 +31,10 @@ Para compilar correctamente los algoritmos en C++ con paralelización, se requie
    ```bash
    pip install flask
 
-## 3.Estructura del proyecto en Flask
-FlaskProject/
-│
-├── app.py                        # Backend principal
-├── MergeSort_OpenMP.exe          # Algoritmo MergeSort con OpenMP
-├── RadixSort_OpenMP.exe         # Algoritmo RadixSort con OpenMP
-├── MergeSort_CUDA5.exe          # Algoritmo paralelo basado en OpenMP
-│
-├── static/                      # Archivos estáticos (CSS, imágenes)
-│   ├── cayetano.jpg
-│   ├── cayetano_escudo.jpg
-│   └── style.css
-│
-├── templates/                   # Vistas HTML Frontend
-│   ├── inicio.html
-│   ├── mergesort.html
-│   └── radixsort.html
+## 🖼️ Diagrama de Estructura del Proyecto
+
+![Estructura del Proyecto](https://github.com/VictorNikolai/PC4/raw/main/Imagenes/Imagen.png)
+
 
 
 ## 4. Ejecución 
